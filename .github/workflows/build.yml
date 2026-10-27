@@ -1,10 +1,35 @@
 name: Build unsigned IPA
 on: [push, workflow_dispatch]
+env:
+  # Same rootfs iSH bundles (Alpine 3.19 x86), see ish/app/iSH.xcconfig
+  ROOTFS_URL: https://github.com/ish-app/roots/releases/download/g00712ff0a54b2839c5aa1a8ed758003ca65357dc/appstore-apk.tar.gz
 jobs:
+  rootfs:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Pre-install desktop packages into rootfs
+        run: |
+          curl -fL "$ROOTFS_URL" -o base.tar.gz
+          sudo mkdir r && sudo tar xzpf base.tar.gz -C r --numeric-owner
+          cat r/etc/alpine-release
+          # x86 (i386) binaries run natively on x86_64, so apk post-install scripts work
+          docker run --rm -v "$PWD/r:/r" alpine:3.19 sh -c '
+            apk --root /r --arch x86 --update-cache add xvfb x11vnc fluxbox xterm font-misc-misc font-cursor-misc &&
+            rm -rf /r/var/cache/apk/*'
+          sudo install -m755 scripts/desktop-setup.sh r/usr/local/bin/desktop
+          sudo tar czpf root.tar.gz --numeric-owner -C r .
+          ls -lh root.tar.gz
+          tar tzf root.tar.gz | grep -E "bin/(Xvfb|x11vnc|fluxbox|xterm)$"
+      - uses: actions/upload-artifact@v4
+        with: { name: rootfs, path: root.tar.gz }
   ipa:
+    needs: rootfs
     runs-on: macos-26
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with: { name: rootfs }
       - name: Fetch iSH (GPL-3.0) source
         run: git clone --recursive --depth 1 https://github.com/ish-app/ish.git ish
       - name: Tools
@@ -15,10 +40,13 @@ jobs:
           xcodebuild -project iSH.xcodeproj -scheme iSH -configuration Release \
             -arch arm64 -sdk iphoneos -derivedDataPath build \
             CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY=""
-      - name: Package IPA
+      - name: Package IPA (with desktop rootfs)
         run: |
           APP=$(find ish/build/Build/Products -name '*.app' -maxdepth 2 | head -1)
-          mkdir Payload && cp -R "$APP" Payload/ && cp scripts/desktop-setup.sh Payload/*.app/ || true
+          mkdir Payload && cp -R "$APP" Payload/
+          cp root.tar.gz Payload/*.app/root.tar.gz
+          cp scripts/desktop-setup.sh Payload/*.app/
           zip -qry LinuxDesktop-unsigned.ipa Payload
+          unzip -l LinuxDesktop-unsigned.ipa | grep root.tar.gz
       - uses: actions/upload-artifact@v4
         with: { name: LinuxDesktop-unsigned-ipa, path: LinuxDesktop-unsigned.ipa }

@@ -5,7 +5,11 @@ iPhone上でオフライン動作するLinuxデスクトップ（自分用・サ
 
 ## 現在のマイルストーン
 - ✅ GitHub ActionsでiSHベースの署名なしIPAをビルド → Alpine Linuxのシェルが起動
-- 🔜 デスクトップ: `scripts/desktop-setup.sh` で Xvfb + fluxbox + x11vnc（初回のみ要ネット、以後オフライン）
+- ✅ デスクトップ部品（Xvfb / fluxbox / xterm / x11vnc）をLinux環境に同梱済み → **完全オフライン**で起動可能
+
+## デスクトップの起動
+アプリを開いてシェルで `desktop` と入力 → App Storeの無料VNCビューア（例: RealVNC Viewer）で `127.0.0.1:5900` に接続。
+※同梱環境は初回起動時に展開されます。以前のバージョンを入れていた場合はアプリを削除してから入れ直してください。
 - 🔜 アプリ内VNCビューア・タッチ→マウス操作（それまではApp Storeの無料VNCビューアで127.0.0.1:5900に接続）
 
 ## インストール手順（Windows）
