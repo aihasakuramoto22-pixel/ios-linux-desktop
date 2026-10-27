@@ -1,0 +1,21 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Linux">
+<link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-180.png">
+<title>Linuxデスクトップ</title>
+<style>
+html,body{margin:0;height:100%;background:#000;color:#eee;font-family:-apple-system,sans-serif;overflow:hidden;touch-action:none}
+#bar{position:fixed;top:env(safe-area-inset-top);left:0;right:0;display:flex;gap:6px;padding:6px;z-index:3;background:#0008;flex-wrap:wrap}
+button{font-size:14px;padding:6px 10px;border-radius:8px;border:0;background:#335;color:#fff}
+#st{font-size:12px;align-self:center}
+#screen_container{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+#screen_container canvas{image-rendering:pixelated}
+#kb{position:fixed;opacity:0;left:0;bottom:0;width:1px;height:1px;font-size:16px}
+</style></head><body>
+<div id="bar"><button id="bstart">起動</button><button id="bkbd">⌨ キーボード</button><button id="bsave">状態を保存</button><button id="bload">保存から再開</button><button id="bhide">▲</button><span id="st">準備中…</span></div>
+<div id="screen_container"><div style="white-space:pre;font:14px monospace"></div><canvas></canvas></div>
+<input id="kb" autocapitalize="off" autocomplete="off" autocorrect="off" spellcheck="false">
+<script src="v86/libv86.js"></script><script src="app.js"></script>
+</body></html>

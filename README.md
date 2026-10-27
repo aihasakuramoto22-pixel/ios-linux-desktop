@@ -1,5 +1,20 @@
 # ios-linux-desktop
 
+## 🌐 Webアプリ版（USBケーブル不要・おすすめ）
+**https://aihasakuramoto22-pixel.github.io/ios-linux-desktop/**
+
+1. iPhoneのSafariで上のURLを開く
+2. 共有ボタン → 「ホーム画面に追加」
+3. **最初の1回はネットにつないだまま**ホーム画面のアイコンから開き、「起動」を押す（約25MBを保存。完了までそのまま待つ）
+4. 2回目以降は**機内モードでも動きます**
+
+操作: タップ=クリック、指でなぞる=マウス移動、2本指タップ=右クリック、「⌨ キーボード」で文字入力、「状態を保存／保存から再開」で続きから。
+中身: [v86](https://github.com/copy/v86)（BSD-2、WebAssemblyのx86エミュレータ）＋ [Tiny Core Linux 11.1](http://tinycorelinux.net)（GPL-2、FLWMデスクトップ）＋ SeaBIOS（LGPL-3）。各ソースは各リンク先で入手できます。
+制限: 起動まで30〜90秒。エミュレーションなので動作は遅め。保存した内容は再起動で消えます（「状態を保存」を使ってください）。Safariのデータを消すとキャッシュも消えます。
+
+---
+## iOSアプリ版（Sideloadly・USB接続が必要）
+
 iPhone上でオフライン動作するLinuxデスクトップ（自分用・サイドロード）。
 エンジンは [iSH](https://github.com/ish-app/ish)（GPL-3.0、JIT不要のx86エミュレータ「asbestos」）。無料Apple IDではJIT/Hypervisorが使えないため、純粋エミュレーション方式を採用。本リポジトリもGPL-3.0。
 
