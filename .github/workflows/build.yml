@@ -2,20 +2,19 @@ name: Build unsigned IPA
 on: [push, workflow_dispatch]
 jobs:
   ipa:
-    runs-on: macos-14
+    runs-on: macos-26
     steps:
       - uses: actions/checkout@v4
       - name: Fetch iSH (GPL-3.0) source
         run: git clone --recursive --depth 1 https://github.com/ish-app/ish.git ish
       - name: Tools
-        run: brew install meson ninja llvm libarchive || true; pip3 install --break-system-packages meson || true
+        run: brew install llvm lld ninja libarchive meson
       - name: Build (no signing)
         working-directory: ish
         run: |
           xcodebuild -project iSH.xcodeproj -scheme iSH -configuration Release \
-            -sdk iphoneos -derivedDataPath build \
-            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" \
-            PRODUCT_BUNDLE_IDENTIFIER=com.sakuramoto.linuxdesktop ROOT_BUNDLE_IDENTIFIER=com.sakuramoto.linuxdesktop
+            -arch arm64 -sdk iphoneos -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY=""
       - name: Package IPA
         run: |
           APP=$(find ish/build/Build/Products -name '*.app' -maxdepth 2 | head -1)
